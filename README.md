@@ -11,8 +11,13 @@ You are allowed to share your edits within the APACHE LICENSE (see LICENSE file)
 
 # Needed Libaries:
 AutoNicker https://www.spigotmc.org/resources/autonicker-1-8-1-9-1-10-1-11-open-source.35772/
+
 CorpseReborn https://www.spigotmc.org/resources/corpsereborn.29875/
+
 CrackShot https://dev.bukkit.org/projects/crackshot
+
 PlaceholderAPI https://www.spigotmc.org/resources/placeholderapi.6245/
+
 StatsAPI https://www.spigotmc.org/resources/statsapi.40464/
+
 spigot 1.8.7
