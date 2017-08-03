@@ -1,0 +1,15 @@
+end:
+    examplereward:
+        chance: 5
+        sender: CONSOLE
+        command: "testcommands"
+win:
+    examplereward:
+        chance: 5
+        sender: CONSOLE
+        command: "testcommands"
+start:
+    examplereward:
+        chance: 5
+        sender: CONSOLE
+        command: "testcommands"
