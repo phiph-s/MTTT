@@ -18,7 +18,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.ibex.nestedvm.util.Seekable.InputStream;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -75,18 +74,15 @@ public class Karma {
 		}
 	}
 	
-	public void reloadKarmaConfig() {
-	    if (customConfigurationFile == null) {
+	public void reloadKarmaConfig() {	    
 	    customConfigurationFile = new File(plugin.getDataFolder(), "karma.yml");
-	    }
-	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-	    // Schaut nach den Standardwerten in der jar
-	    java.io.InputStream defConfigStream = plugin.getResource("karma.yml");
-	    if (defConfigStream != null) {
-	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	        customConfig.setDefaults(defConfig);
-	    }
+		// Schaut nach den Standardwerten in der jar
+		if(!customConfigurationFile.exists()) {
+			plugin.saveResource("karma.yml", false);
+		}
+		
+		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 	}
 	
 	public FileConfiguration getKarmaConfig() {

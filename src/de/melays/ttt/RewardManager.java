@@ -23,17 +23,14 @@ public class RewardManager {
 	}
 	
 	public void reloadRewardFile() {
-	    if (customConfigurationFile == null) {
 	    customConfigurationFile = new File(plugin.getDataFolder(), "rewards.yml");
-	    }
-	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-	    // Schaut nach den Standardwerten in der jar
-	    java.io.InputStream defConfigStream = plugin.getResource("rewards.yml");
-	    if (defConfigStream != null) {
-	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	        customConfig.setDefaults(defConfig);
-	    }
+		// Schaut nach den Standardwerten in der jar
+		if(!customConfigurationFile.exists()) {
+			plugin.saveResource("rewards.yml", false);
+		}
+		
+		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 	}
 	
 	public FileConfiguration getRewardFile() {

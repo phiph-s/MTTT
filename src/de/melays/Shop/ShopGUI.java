@@ -15,7 +15,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import de.melays.ttt.Arena;
-import net.minecraft.server.v1_8_R3.MobSpawnerAbstract.a;
 
 import org.bukkit.ChatColor;
 
