@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.ibex.nestedvm.util.Seekable.InputStream;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
@@ -23,17 +22,14 @@ public class MessageFetcher {
 	}
 	
 	public void reloadMessageFile() {
-	    if (customConfigurationFile == null) {
 	    customConfigurationFile = new File(plugin.getDataFolder(), "messages.yml");
-	    }
-	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-	    // Schaut nach den Standardwerten in der jar
-	    java.io.InputStream defConfigStream = plugin.getResource("messages.yml");
-	    if (defConfigStream != null) {
-	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	        customConfig.setDefaults(defConfig);
-	    }
+		// Schaut nach den Standardwerten in der jar
+		if(!customConfigurationFile.exists()) {
+			plugin.saveResource("messages.yml", false);
+		}
+		
+		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 	}
 	
 	public FileConfiguration getMessageFetcher() {

@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.ibex.nestedvm.util.Seekable.InputStream;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,17 +28,14 @@ public class MultiSpawn {
 	}
 	
 	public void reloadMultiSpawnFile() {
-	    if (customConfigurationFile == null) {
 	    customConfigurationFile = new File(plugin.getDataFolder(), "multispawn.yml");
-	    }
-	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-	    // Schaut nach den Standardwerten in der jar
-	    java.io.InputStream defConfigStream = plugin.getResource("multispawn.yml");
-	    if (defConfigStream != null) {
-	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	        customConfig.setDefaults(defConfig);
-	    }
+		// Schaut nach den Standardwerten in der jar
+		if(!customConfigurationFile.exists()) {
+			plugin.saveResource("multispawn.yml", false);
+		}
+		
+		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 	}
 	
 	public FileConfiguration getMultiSpawn() {
