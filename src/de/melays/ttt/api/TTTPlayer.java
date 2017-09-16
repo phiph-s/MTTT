@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import de.melays.ttt.Arena;
 import de.melays.ttt.main;
 
-public class TTTPlayer {
+public class TTTPlayer{
 	
 	Player p;
 	main plugin;

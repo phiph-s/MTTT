@@ -133,27 +133,27 @@ public class WeaponFetcher {
 		
 		ItemStack giveback = null;
 		
-		try{
-			for (ItemStack i : p.getInventory().getContents()){
-				if (i != null){
-					
-					if (i.getItemMeta() != null){
-						
-						if (i.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("shopopener"))){
-							
-							giveback = i.clone();
-							i.setType(Material.AIR);
-							
-						}
-						
-					}
-					
-				}
-			}
-		}
-		catch(Exception ex){
-			
-		}
+//		try{
+//			for (ItemStack i : p.getInventory().getContents()){
+//				if (i != null){
+//					
+//					if (i.getItemMeta() != null){
+//						
+//						if (i.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("shopopener"))){
+//							
+//							giveback = i.clone();
+//							i.setType(Material.AIR);
+//							
+//						}
+//						
+//					}
+//					
+//				}
+//			}
+//		}
+//		catch(Exception ex){
+//			
+//		}
 		
 		
 		Collections.shuffle(chances);
@@ -169,10 +169,6 @@ public class WeaponFetcher {
 			}
 			random.giveCrackShot(p);
 			
-			if (giveback != null){
-				p.getInventory().addItem(giveback);
-			}
-			
 			return true;
 		}
 		
@@ -184,10 +180,6 @@ public class WeaponFetcher {
 		boolean give = true;
 		boolean remchest = true;
 		
-//		for (ItemStack s : p.getInventory().getContents()){
-//			Bukkit.broadcastMessage(p.getInventory().getContents()+"");
-//		}
-		
 		ArrayList<ItemStack> ItemList = new ArrayList<ItemStack>();
 		for (ItemStack i : p.getInventory().getContents()){
 			ItemList.add(i);
@@ -196,7 +188,7 @@ public class WeaponFetcher {
 			ItemList.add(i);
 		}
 		
-	    for (int i = 0; i < p.getInventory().getSize(); i++) {
+	    for (int i = 0; i < ItemList.size() - 1; i++) {
 	        if (ItemList.get(i) != null) {
 	        	ItemStack s = ItemList.get(i);
 				if (getClass(s) == classid){
@@ -208,9 +200,7 @@ public class WeaponFetcher {
 						if (getPriority(s) == priority){
 							plugin.sd.playSound(p , "CLICK", "BLOCK_LEVER_CLICK" );
 							remchest = false;
-						}
-						if (!s.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("shopopener"))){
-							p.getInventory().remove(s);
+							give = false;
 						}
 					}
 				}
@@ -232,10 +222,6 @@ public class WeaponFetcher {
 			remchest = false;
 		}
 		
-		if (giveback != null){
-			p.getInventory().addItem(giveback);
-		}
-		
 		return remchest;
 	}
 	
@@ -244,34 +230,42 @@ public class WeaponFetcher {
 	}
 	
 	public int getPriority (ItemStack s){
-		if (s != null){
-			ArrayList<String> lore = new ArrayList<String>();
-			lore = (ArrayList<String>) s.getItemMeta().getLore();
-			if (lore != null){
-				if (lore.size() == 1){
-					String[] data = lore.get(0).split(":");
-					if (data.length == 2){
-						return Integer.parseInt(data[0]);
+		try {
+			if (s != null){
+				ArrayList<String> lore = new ArrayList<String>();
+				lore = (ArrayList<String>) s.getItemMeta().getLore();
+				if (lore != null){
+					if (lore.size() == 1){
+						String[] data = lore.get(0).split(":");
+						if (data.length == 2){
+							return Integer.parseInt(data[0]);
+						}
 					}
 				}
 			}
+			return -1;
+		}catch(Exception ex) {
+			return -1;
 		}
-		return -1;
 	}
 	
 	public int getClass (ItemStack s){
-		if (s != null){
-			ArrayList<String> lore = new ArrayList<String>();
-			lore = (ArrayList<String>) s.getItemMeta().getLore();
-			if (lore != null){
-				if (lore.size() == 1){
-					String[] data = lore.get(0).split(":");
-					if (data.length == 2){
-						return Integer.parseInt(data[1]);
+		try {
+			if (s != null){
+				ArrayList<String> lore = new ArrayList<String>();
+				lore = (ArrayList<String>) s.getItemMeta().getLore();
+				if (lore != null){
+					if (lore.size() == 1){
+						String[] data = lore.get(0).split(":");
+						if (data.length == 2){
+							return Integer.parseInt(data[1]);
+						}
 					}
 				}
 			}
+			return -1;
+		}catch(Exception ex) {
+			return -1;
 		}
-		return -1;
 	}
 }

@@ -127,7 +127,7 @@ public class RoleManager {
 			Location lc = t.getLocation();
 			lc.setY(t.getLocation().getY()+3);
 			t.sendTitle(plugin.getTraitorDisplay(false), "");
-			arena.traitors_save += t.getDisplayName()+" ";
+			arena.traitors_save += t.getName()+" ";
 			arena.karmaToLevel(t);
 			arena.shop.addPoints(t, plugin.getConfig().getInt("startpoints"));
 		}

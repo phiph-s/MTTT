@@ -103,6 +103,8 @@ public class Arena
   
   int max_players = 0;
   
+  boolean new_specmode;
+  
   //Countdown
   int counter;
   int counterb = -1;
@@ -112,6 +114,12 @@ public class Arena
   public ShopGUI shopgui;
   
   public main plugin;
+  
+  public SpecInventory specinv;
+  
+  public void setMSignsMOTD (){
+	  MOTDReflector.setMOTD(",,," + name + "," + gamestate+",MTTT-MSIGNS-HOOK");
+  }
   
   public void leaveAll (){
 	  for (Player p : new ArrayList<Player>(getPlayerList())){
@@ -226,6 +234,10 @@ public class Arena
     this.back = back;
     this.gamestate = "waiting";
 	this.prefix = this.plugin.prefix;
+	
+	specinv = new SpecInventory(this);
+
+	new_specmode = plugin.getConfig().getBoolean("newspecmode");
 	
 	if (plugin.getConfig().getString(name+".max") != null){
 		this.max_players = plugin.getConfig().getInt(name+".max");
@@ -447,6 +459,7 @@ public class Arena
   
   public void gameLoop(){
 	  final Arena a = this;
+	  updateSpecVisibility();
 	  plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 		  public void run() {
 			  for (Player p : getCompleteList()){
@@ -584,6 +597,11 @@ public class Arena
 					  }
 				  }
 				  for (Player p : specs){
+					  if (new_specmode){
+						  p.setGameMode(GameMode.SURVIVAL);
+						  p.setAllowFlight(true);
+					  }
+					  else
 					  p.setGameMode(GameMode.SPECTATOR);
 				  }
 				  for (Player p : getPlayerList()){
@@ -649,6 +667,8 @@ public class Arena
   public void callHitEvent(EntityDamageByEntityEvent e){
 	  Player hitter = (Player)e.getDamager();
 	  Player aim = (Player)e.getEntity();
+	  if (specs.contains(hitter))
+		  e.setCancelled(true);
 	  if (gamestate == "waiting" || gamestate == "end"){
 		  e.setCancelled(true);
 	  }
@@ -667,6 +687,29 @@ public class Arena
 
 		}
 		p.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
+  }
+  
+  public void updateSpecVisibility(){
+	  for (Player p : this.getCompleteList()){
+		  for (Player s : this.getCompleteList()){
+			  p.showPlayer(s);
+		  }
+	  }
+	  for (Player s : specs){
+		  for (Player p : this.getPlayerList()){
+			  p.hidePlayer(s);
+		  }
+		  ArrayList<Player> update = new ArrayList<Player>();
+		  update.add(s);
+		  ColorTabAPI.setTabStyle(s, ChatColor.ITALIC+"" , "", 1000 , update);
+	  }
+	  for (Player s : specs){
+		  for (Player p : specs){
+			  if (s != p){
+				  s.hidePlayer(p);
+			  }
+		  }
+	  }
   }
   
   public void restartArena (){
@@ -689,6 +732,8 @@ public class Arena
 	  players.addAll(innocents);
 	  players.addAll(detectives);
 	  for (Player p : specs){
+		  p.setFlying(false);
+		  p.setAllowFlight(false);
 		  p.setGameMode(GameMode.SURVIVAL);
 	  }
 	  players.addAll(specs);
@@ -698,6 +743,9 @@ public class Arena
 	  traitors = new ArrayList<Player>();
 	  realnicks = new HashMap<String , String>();
 	  for (Player p : players){
+		  p.setFlying(false);
+		  p.setAllowFlight(false);
+		  p.setGameMode(GameMode.SURVIVAL);
 		  for (PotionEffect effect : p.getActivePotionEffects()){
 			  try {
 				  p.removePotionEffect(effect.getType());
@@ -726,6 +774,14 @@ public class Arena
 			  realnicks.put(session.holder.getUniqueId().toString() , session.current_nick);
 			  p.sendMessage(plugin.mf.getMessage("randomnick", true).replaceAll("%nick%", session.current_nick));
 		  }
+		  int slotrole = plugin.getConfig().getInt("roleitem_slot");
+		  int slotleave = plugin.getConfig().getInt("leaveitem_slot");
+		  if (plugin.getConfig().getBoolean("role_item")){
+			  p.getInventory().setItem(slotrole-1, new ItemBuilder(Material.getMaterial(plugin.getConfig().getString("role_item_type"))).setName(plugin.mf.getMessage("role_item", true)).toItemStack());
+		  }
+		  if (plugin.getConfig().getBoolean("leave_item")){
+			  p.getInventory().setItem(slotleave-1, new ItemBuilder(Material.getMaterial(plugin.getConfig().getString("leave_item_type"))).setName(plugin.mf.getMessage("leave_item", true)).toItemStack());
+		  }
 	  }
 	  ArenaStateChangeEvent event = new ArenaStateChangeEvent(this , "end" , "waiting");
 	  Bukkit.getServer().getPluginManager().callEvent(event);
@@ -739,9 +795,16 @@ public class Arena
 	  		  
 	  	  }
 	  }
+	  for (Player s : this.getCompleteList()){
+		  for (Player p : this.getCompleteList()){
+			  p.showPlayer(s);
+		  }
+	  }
+	  updateSpecVisibility();
   }
   
   public void callClickEvent (InventoryClickEvent e){
+	  this.specinv.onClick(e);
 	  if (e.getInventory().getName().equals("Shop") || e.getWhoClicked().getOpenInventory().getTopInventory().getName().equals("Shop")){
 		  e.setCancelled(true);
 		  if (e.getInventory().getName().equals("Shop")){
@@ -832,8 +895,18 @@ public class Arena
   }
   
   public void callInteract (PlayerInteractEvent e){
-	  
-	  if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR){
+	  if (specs.contains(e.getPlayer())){
+		  e.setCancelled(true);
+		  if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR){
+			  
+			  	Player p = e.getPlayer();
+				if ( p.getItemInHand().getType().equals(Material.COMPASS)){
+					this.specinv.openInventory(p);
+				}
+			  
+		  }
+	  }
+	  else if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR){
 		  
 		  	Player p = e.getPlayer();
 			if ( p.getItemInHand().getType().equals(Material.getMaterial(plugin.getConfig().getString("role_item_type"))) && this.gamestate.equals("waiting")){
@@ -1183,7 +1256,9 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 	  p.getInventory().clear();
 	  p.setHealth(20);
 	  p.setLevel(0);
+	  p.setAllowFlight(false);
 	  String end = rm.checkEnd();
+	  
 	  if (end != null){
 		  if (end == "traitors"){
 			  endGame(false);
@@ -1193,6 +1268,13 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 		  }
 	  }
 	  
+	  for (Player p2 :Bukkit.getOnlinePlayers()){
+		  
+		  p.showPlayer(p2);
+		  p2.showPlayer(p);
+		  
+	  }
+	  updateSpecVisibility();
 	  if (plugin.getConfig().getBoolean("hide_players_outside_arena")){
 		  for (Player p2 : this.getCompleteList()){
 			  p2.hidePlayer(p);
@@ -1270,14 +1352,28 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 	  if (plugin.getConfig().getBoolean("spectatormode")){
 		  specs.add(p);
 		  p.eject();
-		  p.setGameMode(GameMode.SPECTATOR);
+		  if (new_specmode){
+			  p.setGameMode(GameMode.SURVIVAL);
+			  p.setAllowFlight(true);
+			  p.setFlying(true);
+		  }
+		  else
+			  p.setGameMode(GameMode.SPECTATOR);
 		  p.teleport(spectator);
 	  	  plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 			  public void run() {
-		          p.setGameMode(GameMode.SPECTATOR);
+				  if (new_specmode){
+					  p.setGameMode(GameMode.SURVIVAL);
+					  p.setAllowFlight(true);
+				  }
+				  else
+					  p.setGameMode(GameMode.SPECTATOR);
 		          p.teleport(spectator);
+		          p.getInventory().addItem(new ItemBuilder(Material.COMPASS).setName(plugin.mf.getMessage("specitem", true)).toItemStack());
 			  }
 		  },5L);
+	  	  p.getInventory().addItem(new ItemBuilder(Material.COMPASS).setName(plugin.mf.getMessage("specitem", true)).toItemStack());
+	  	  updateSpecVisibility();
 	  	  try{
 	  		  ColorTabAPI.clearTabStyle(p, Bukkit.getOnlinePlayers());
 	  	  }
@@ -1294,6 +1390,7 @@ public void callArrowHitEvent (ProjectileHitEvent e){
   HashMap<String , String> realnicks = new HashMap<String , String>();
   
   public void join(Player p){
+	  updateSpecVisibility();
 	  if (this.max_players != 0){
 		  if (this.max_players <= this.getCompleteSize()){
 			  if (!p.hasPermission("ttt.premiumjoin")){

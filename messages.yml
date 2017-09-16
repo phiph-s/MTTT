@@ -80,6 +80,8 @@ nickresolve: "%prefix% The nick &e%nick% &7was the player &4&l%player%&7!"
 motdwaiting: "waiting"
 motdingame: "ingame"
 motdending: "ending"
+specinv: "&7Spectate"
+specitem: "&7Spectate"
 stats-command:
 - "%prefix% The player %player% has %karma% karma! He is rank %ranking% in the ranking!"
 - "%prefix% He is a %rank%! He made %kills% &7kills in %games% &7games and won %wins% &7of them."
