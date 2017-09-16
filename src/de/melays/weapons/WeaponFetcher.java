@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.ibex.nestedvm.util.Seekable.InputStream;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,17 +32,14 @@ public class WeaponFetcher {
 	}
 	
 	public void reloadWeaponFile() {
-	    if (customConfigurationFile == null) {
 	    customConfigurationFile = new File(plugin.getDataFolder(), "weapons.yml");
-	    }
-	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-	    // Schaut nach den Standardwerten in der jar
-	    java.io.InputStream defConfigStream = plugin.getResource("weapons.yml");
-	    if (defConfigStream != null) {
-	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-	        customConfig.setDefaults(defConfig);
-	    }
+		// Schaut nach den Standardwerten in der jar
+		if(!customConfigurationFile.exists()) {
+			plugin.saveResource("weapons.yml", false);
+		}
+		
+		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 	}
 	
 	public FileConfiguration getWeaponFetcher() {
