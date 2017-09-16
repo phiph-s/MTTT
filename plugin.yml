@@ -1,0 +1,28 @@
+name: MTTT
+version: 3.0.0 Alpha
+main: de.melays.ttt.main
+author: MeLays
+softdepend: [Multiverse-Core, CrackShot, PlaceholderAPI , StatsAPI , AutoNicker]
+commands:
+    ttt:
+        description: All informations
+        usage: /<command>
+    tc:
+        description: Traitorchat
+        usage: /<command>
+    tshop:
+        description: Shop
+        usage: /<command>
+    shop:
+        description: Shop
+        usage: /<command>
+    traitor:
+        description: Traitorpasses
+        usage: /<command>
+    detective:
+        description: Detectivepass
+        usage: /<command>
+    role:
+        description: Detectivepass
+        usage: /<command>
+    

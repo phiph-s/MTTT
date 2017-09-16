@@ -1,0 +1,9 @@
+ranks:    
+    '0':
+      prefix: '&8Player'
+    '100':
+      prefix: '&7Citizen'
+    '1000':
+      prefix: '&bProfessional'
+    '100000':
+      prefix: '&6Agent'
