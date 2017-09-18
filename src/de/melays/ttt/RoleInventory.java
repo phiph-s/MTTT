@@ -2,7 +2,6 @@ package de.melays.ttt;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +26,6 @@ public class RoleInventory implements Listener {
 		this.plugin = m;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void open(){
 		TTTPlayer tp = plugin.getAPI().getPlayer(p);
 		if (tp.isPlaying()){
@@ -40,8 +38,8 @@ public class RoleInventory implements Listener {
 				msg = plugin.mf.getMessage("roleinventoryselected", true).replace("%role%", plugin.getDetectiveDisplay(false));
 			}
 			inv = Bukkit.createInventory(null, 9 , msg);
-			inv.setItem(2, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.RED).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
-			inv.setItem(6, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.BLUE).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(2, new ItemBuilder(Material.WOOL , 1, (byte) 14).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(6, new ItemBuilder(Material.WOOL , 1, (byte) 11).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
 			fillPanes(inv);
 			p.openInventory(inv);
 		}

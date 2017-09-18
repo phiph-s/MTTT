@@ -890,7 +890,7 @@ public class Arena
 			  
 			  	Player p = e.getPlayer();
 				if ( p.getItemInHand().getType().equals(Material.COMPASS)){
-					this.specinv.openInventory(p);
+					this.specinv.openInventory(p , this.getPlayerList());
 				}
 			  
 		  }

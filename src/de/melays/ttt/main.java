@@ -38,6 +38,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -47,11 +48,13 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -59,6 +62,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.mcstats.Metrics;
 
 import de.melays.Sound.SoundDebugger;
@@ -1695,8 +1699,36 @@ implements Listener
 			}
 		}
 	}
+	
+	@EventHandler
+	public void onAS(PlayerPickupItemEvent e){
+		Player p = e.getPlayer();
+		Arena ar = m.searchPlayer(p);
+		if (ar != null){
+			e.setCancelled(true);
+		}
+	}
+	
 	@EventHandler
 	public void onAS(PlayerArmorStandManipulateEvent e){
+		Player p = e.getPlayer();
+		Arena ar = m.searchPlayer(p);
+		if (ar != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onASS(PlayerInteractEntityEvent e){
+		Player p = e.getPlayer();
+		Arena ar = m.searchPlayer(p);
+		if (ar != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onAS(PlayerInteractAtEntityEvent e){
 		Player p = e.getPlayer();
 		Arena ar = m.searchPlayer(p);
 		if (ar != null){
@@ -1847,9 +1879,94 @@ implements Listener
 			if (a1 != null){
 				if (a1 == a2){
 					a1.callHitEvent(e);
+					return;
 				}
 			}
+			
+			a1 = m.searchSpec((Player)e.getDamager());
+			if (a1 != null){
+				e.setCancelled(true);
+			}
+			
 		}
+	}
+	
+	@EventHandler
+	public void onSpecPvP (EntityDamageByEntityEvent e){
+		if (e.getDamager() instanceof Player){
+			Arena a1 = m.searchSpec((Player)e.getDamager());
+			if (a1 != null){
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onAS (PlayerInteractEntityEvent e){
+		Arena a1 = m.searchSpec(e.getPlayer());
+		if (a1 != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onASa (PlayerInteractAtEntityEvent e){
+		Arena a1 = m.searchSpec(e.getPlayer());
+		if (a1 != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPSM (PlayerArmorStandManipulateEvent e){
+		Arena a1 = m.searchSpec(e.getPlayer());
+		if (a1 != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPSM (FoodLevelChangeEvent e){
+		if (e.getEntity() instanceof Player){
+			Arena a1 = m.searchSpec((Player)e.getEntity());
+			if (a1 != null){
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPSM (EntityDamageEvent e){
+		if (e.getEntity() instanceof Player){
+			Arena a1 = m.searchSpec((Player)e.getEntity());
+			if (a1 != null){
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerHurtPlayer(EntityDamageByEntityEvent event) {
+	    Entity entityDamager = event.getDamager();
+	    Entity entityDamaged = event.getEntity();
+	    if(entityDamager instanceof Arrow) {
+	        if(entityDamaged instanceof Player && ((Arrow) entityDamager).getShooter() instanceof Player) {
+	            Arrow arrow = (Arrow) entityDamager;
+	            Vector velocity = arrow.getVelocity();
+	            Player shooter = (Player) arrow.getShooter();
+	            Player damaged = (Player) entityDamaged;
+	            if(m.searchSpec(damaged) != null) {
+	                damaged.teleport(entityDamaged.getLocation().add(0, 5, 0));
+	                damaged.setFlying(true);
+	                Arrow newArrow = shooter.launchProjectile(Arrow.class);
+	                newArrow.setShooter(shooter);
+	                newArrow.setVelocity(velocity);
+	                newArrow.setBounce(false);
+	                event.setCancelled(true);
+	                arrow.remove();
+	            }
+	        }
+	    }
 	}
 	
 	@EventHandler
