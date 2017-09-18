@@ -5,10 +5,7 @@
 	<classpathentry kind="lib" path="/#Files/PlaceholderAPI-2.8.2.jar"/>
 	<classpathentry kind="lib" path="/#Files/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar"/>
 	<classpathentry kind="lib" path="/#Files/AutoNicker.jar"/>
-	<classpathentry kind="lib" path="/#Files/CorpseReborn.jar"/>
 	<classpathentry kind="lib" path="/#Files/CrackShot.jar"/>
 	<classpathentry kind="lib" path="/#Files/statsapi_1-6-0_release.jar"/>
-	<classpathentry kind="lib" path="/#Files/CloudNetAPI.jar"/>
-	<classpathentry kind="lib" path="/#Files/TimoCloud.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

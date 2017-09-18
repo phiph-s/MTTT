@@ -1,7 +1,6 @@
 package de.melays.weapons;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -34,6 +33,7 @@ public class Weapon {
 		this.name = name;
 		this.fetcher = fetcher;
 	}
+	@SuppressWarnings("unchecked")
 	public void loadWeapon (){
 		if (name.startsWith("crackshot-")){
 			

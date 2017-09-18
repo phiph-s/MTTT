@@ -11,12 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.melays.ttt.Arena;
 import de.melays.ttt.main;
-import net.md_5.bungee.api.ChatColor;
 
 public class MultiSpawn {
 	FileConfiguration customConfig = null;

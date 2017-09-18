@@ -1,7 +1,5 @@
 package de.melays.ttt;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -29,6 +27,7 @@ public class RoleInventory implements Listener {
 		this.plugin = m;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void open(){
 		TTTPlayer tp = plugin.getAPI().getPlayer(p);
 		if (tp.isPlaying()){
@@ -41,8 +40,8 @@ public class RoleInventory implements Listener {
 				msg = plugin.mf.getMessage("roleinventoryselected", true).replace("%role%", plugin.getDetectiveDisplay(false));
 			}
 			inv = Bukkit.createInventory(null, 9 , msg);
-			inv.setItem(2, new ItemBuilder(Material.WOOL).setDyeColor(DyeColor.RED).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
-			inv.setItem(6, new ItemBuilder(Material.WOOL).setDyeColor(DyeColor.BLUE).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(2, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.RED).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(6, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.BLUE).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
 			fillPanes(inv);
 			p.openInventory(inv);
 		}
@@ -81,7 +80,7 @@ public class RoleInventory implements Listener {
 					open();
 				}
 				else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(plugin.getDetectiveDisplay(false))){
-					if (a.usedpass_detective.contains(p)) {
+					if (a.usedpass.contains(p)) {
 						toggleTraitor();
 					}
 					toggleDetective();

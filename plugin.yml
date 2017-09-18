@@ -1,8 +1,8 @@
 name: MTTT
-version: 3.0.2
+version: 3.1.0
 main: de.melays.ttt.main
 author: MeLays
-softdepend: [Multiverse-Core, CrackShot, PlaceholderAPI , StatsAPI , AutoNicker, TimoCloud , CloudNet-API]
+softdepend: [Multiverse-Core, CrackShot, PlaceholderAPI , StatsAPI , AutoNicker]
 commands:
     ttt:
         description: All informations

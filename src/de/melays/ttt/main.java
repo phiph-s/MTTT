@@ -81,7 +81,6 @@ implements Listener
 	public Karma karma;
 	public MultiSpawn ms;
 	public Rank rank;
-	ScoreboardManagerTTT sb;
 	TesterSetup ts;
 	
 	NewTesterSetup nts;
@@ -314,7 +313,6 @@ implements Listener
 	{
 		
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		sb = new ScoreboardManagerTTT(this);
 		instance = this;
 		rank = new Rank(this);
 		rank.getRanks().options().copyDefaults(true);
@@ -404,6 +402,10 @@ implements Listener
 		getConfig().addDefault("hidespecs", false);
 		getConfig().addDefault("newspecmode", true);
 		getConfig().addDefault("alphawarning", true);
+		getConfig().addDefault("tester.innocent_lamp.material", "WOOL");
+		getConfig().addDefault("tester.innocent_lamp.data", 5);
+		getConfig().addDefault("tester.traitor_lamp.material", "WOOL");
+		getConfig().addDefault("tester.traitor_lamp.data", 14);
 		//    getConfig().addDefault("passreward.enabled", false);
 		//    getConfig().addDefault("passreward.karmasteps", 500);
 		//    getConfig().addDefault("passreward.passes", 1);
@@ -669,6 +671,7 @@ implements Listener
 		}
 	}
 	
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
 		if (!(sender instanceof Player))
@@ -678,7 +681,6 @@ implements Listener
 					if (args.length < 3){
 						return false;
 					}
-					@SuppressWarnings("deprecation")
 					OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
 					if (!op.hasPlayedBefore() && !op.isOnline()){
 						return false;
@@ -835,7 +837,6 @@ implements Listener
 				}
 				getConfig().set(args[1] + ".enabled" , true);
 				getConfig().set(args[1] + ".min", Integer.parseInt(args[2]));
-				@SuppressWarnings("unchecked")
 				ArrayList<String> list = (ArrayList<String>)getConfig().getList("arenas");
 				if (list == null) {
 					list = new ArrayList<String>();
@@ -939,7 +940,7 @@ implements Listener
 					p.sendMessage(prefix+ " Arena "+args[1]+" already loaded. Use /ttt reload <arena>");
 				}
 				else{
-					ArrayList list = (ArrayList)getConfig().getList("arenas");
+					ArrayList<String> list = (ArrayList<String>)getConfig().getList("arenas");
 					if (list.contains(args[1])){
 						try{
 							mountArena(args[1]);
@@ -991,7 +992,7 @@ implements Listener
 					return true;
 				}
 				else{
-					ArrayList list = (ArrayList)getConfig().getList("arenas");
+					ArrayList<String> list = (ArrayList<String>)getConfig().getList("arenas");
 					if (list.contains(args[1])){
 						try{
 							unmountArena(args[1]);
@@ -1022,7 +1023,7 @@ implements Listener
 					return true;
 				}
 				else{
-					ArrayList list = (ArrayList)getConfig().getList("arenas");
+					ArrayList<String> list = (ArrayList<String>)getConfig().getList("arenas");
 					if (list.contains(args[1])){
 						p.sendMessage("");
 						p.sendMessage(prefix + " Arena "+args[1] + " check:");
@@ -1031,7 +1032,9 @@ implements Listener
 						p.sendMessage(prefix + " Location game: " + (getConfig().get(args[1] + ".game.x") != null));
 						p.sendMessage(prefix + " Location spec: " + (getConfig().get(args[1] + ".spec.x") != null));
 						p.sendMessage(prefix + ChatColor.BOLD + " Optional:");
-						p.sendMessage(prefix + " Location tester: " + (getConfig().get(args[1] + ".tester.x") != null));
+						p.sendMessage(prefix + " Location tester.inner: " + (getConfig().get(args[1] + ".tester.inner.x") != null));
+						p.sendMessage(prefix + " Location tester.outer: " + (getConfig().get(args[1] + ".tester.outer.x") != null));
+						p.sendMessage(prefix + " Location (old) tester: " + (getConfig().get(args[1] + ".tester.x") != null));
 						p.sendMessage(prefix + " Location sign: " + (getConfig().get(args[1] + ".sign.x") != null));
 						p.sendMessage(prefix + " Location lobby: " + (getConfig().get(args[1] + ".lobby.x") != null));
 						p.sendMessage("");
@@ -1076,13 +1079,13 @@ implements Listener
 				}
 				return true;
 			}
-			else if (args[0].equals("deleteoldtester")){
+			else if (args[0].equals("deletetester")){
 				if(!(p.hasPermission("ttt.setup"))){
 					p.sendMessage(mf.getMessage("nopermission", true));
 					return true;
 				}
 				if (args.length != 2){
-					p.sendMessage(mf.getMessage("wrongcommandusage", true).replace("%commandhelp%","/ttt deleteoldtester <arena>"));
+					p.sendMessage(mf.getMessage("wrongcommandusage", true).replace("%commandhelp%","/ttt deletetester <arena>"));
 					return true;
 				}
 				Arena ar = m.get(args[1]);
@@ -1091,6 +1094,7 @@ implements Listener
 				}
 				else{
 					getConfig().set(ar.name+".tester", null);
+					getConfig().set(ar.name+".tester_data", null);
 					saveConfig();
 					p.sendMessage(mf.getMessage("prefix", false)+" Tester removed succesfully");
 				}
@@ -1605,7 +1609,7 @@ implements Listener
 			Player p = (Player)e.getEntity();
 			Arena ar = m.searchPlayer(p);
 			if (ar != null){
-				if(!(ar.randInt(1,3) == 1)){
+				if(!(Arena.randInt(1,3) == 1)){
 					e.setCancelled(true);
 				}
 				

@@ -16,16 +16,12 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -37,11 +33,8 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -126,7 +119,7 @@ public class Arena
 		  p.teleport(back);
 		  leave(p , true);
 	  }
-	  ArrayList<Player> specss = new ArrayList();
+	  ArrayList<Player> specss = new ArrayList<Player>();
 	  specss.addAll(specs);
 	  for (Player p : new ArrayList<Player>(specss)){
 		  p.setGameMode(GameMode.SURVIVAL);
@@ -398,7 +391,7 @@ public class Arena
   }
   
   public ArrayList<Player> getPlayerList(){
-	  ArrayList p = new ArrayList<Player>();
+	  ArrayList<Player> p = new ArrayList<Player>();
 	  p.addAll(traitors);
 	  p.addAll(innocents);
 	  p.addAll(detectives);
@@ -409,7 +402,7 @@ public class Arena
   }
   
   public ArrayList<Player> getCompleteList(){
-	  ArrayList p = new ArrayList<Player>();
+	  ArrayList<Player> p = new ArrayList<Player>();
 	  p.addAll(traitors);
 	  p.addAll(innocents);
 	  p.addAll(detectives);
@@ -462,9 +455,6 @@ public class Arena
 	  updateSpecVisibility();
 	  plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 		  public void run() {
-			  for (Player p : getCompleteList()){
-				  plugin.sb.setStats(p);
-			  }
 			  if (gamestate == "waiting"){
 				  if(counter == plugin.getConfig().getInt("waitingtime") && players.size() < min){
 					  if (lobbymode){
@@ -666,7 +656,6 @@ public class Arena
   
   public void callHitEvent(EntityDamageByEntityEvent e){
 	  Player hitter = (Player)e.getDamager();
-	  Player aim = (Player)e.getEntity();
 	  if (specs.contains(hitter))
 		  e.setCancelled(true);
 	  if (gamestate == "waiting" || gamestate == "end"){
@@ -814,7 +803,7 @@ public class Arena
   }
   
   public void fixPlayers(){
-	  ArrayList<Player> all = new ArrayList(getPlayerList());
+	  ArrayList<Player> all = new ArrayList<Player>(getPlayerList());
 	  all.addAll(specs);
 	  for (Player p : all){
 		  for (Player p2 : all){
@@ -863,7 +852,7 @@ public class Arena
 	  rm.dropKillMessage(aim, killer);
 	  aim.sendMessage(plugin.mf.getMessage("playerdiedspec", true));
 	  try {
-		new BypassRespawnAPI().sendRespawnPacket(aim);
+		  BypassRespawnAPI.sendRespawnPacket(aim);
 	  } catch (Exception e1) {
 
 	  }
@@ -1227,7 +1216,7 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 		  e.setDroppedExp(0);
 		  createDeathStand(p , p.getLocation() , rm.getRole(p) , null , null);
 		  try {
-				new BypassRespawnAPI().sendRespawnPacket(p);
+				BypassRespawnAPI.sendRespawnPacket(p);
 		  } catch (Exception e1) {
 
 		  }
@@ -1245,7 +1234,8 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 	  }
   }
   
-  public void leave(Player p , boolean silent){
+  @SuppressWarnings("deprecation")
+public void leave(Player p , boolean silent){
 	  if (!silent){
 		  rm.dropKillMessage(p, null);
 	  }
@@ -1291,7 +1281,6 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 	  
 	  p.getInventory().setContents(inventorys.get(p));
 	  p.getInventory().setArmorContents(armorinventorys.get(p));
-	  plugin.sb.removeBoard(p);
 	  team.removePlayer(p);
   }
   
@@ -1389,7 +1378,8 @@ public void callArrowHitEvent (ProjectileHitEvent e){
   
   HashMap<String , String> realnicks = new HashMap<String , String>();
   
-  public void join(Player p){
+  @SuppressWarnings("deprecation")
+public void join(Player p){
 	  updateSpecVisibility();
 	  if (this.max_players != 0){
 		  if (this.max_players <= this.getCompleteSize()){
@@ -1463,7 +1453,6 @@ public void callArrowHitEvent (ProjectileHitEvent e){
 			  p.sendMessage(plugin.mf.getMessage("specdisabled", true));
 		  }
 	  }
-	  plugin.sb.createBoard(p);
 	  if (plugin.getConfig().getBoolean("hide_players_outside_arena")){
 		  for (Player p2 : Bukkit.getOnlinePlayers()){
 			  p.hidePlayer(p2);

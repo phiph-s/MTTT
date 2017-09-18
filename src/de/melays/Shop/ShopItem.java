@@ -1,11 +1,8 @@
 package de.melays.Shop;
 
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.SpawnEgg;
-
 import org.bukkit.ChatColor;
 
 public class ShopItem {

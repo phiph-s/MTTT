@@ -8,16 +8,12 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.ChatColor;
-
 import de.melays.ttt.main;
 
 public class WeaponFetcher {
@@ -125,32 +121,7 @@ public class WeaponFetcher {
 					chances.add(w);
 				}
 			}
-		}
-		
-		ItemStack giveback = null;
-		
-//		try{
-//			for (ItemStack i : p.getInventory().getContents()){
-//				if (i != null){
-//					
-//					if (i.getItemMeta() != null){
-//						
-//						if (i.getItemMeta().getDisplayName().equals(plugin.getConfig().getString("shopopener"))){
-//							
-//							giveback = i.clone();
-//							i.setType(Material.AIR);
-//							
-//						}
-//						
-//					}
-//					
-//				}
-//			}
-//		}
-//		catch(Exception ex){
-//			
-//		}
-		
+		}		
 		
 		Collections.shuffle(chances);
 		Collections.shuffle(chances);
