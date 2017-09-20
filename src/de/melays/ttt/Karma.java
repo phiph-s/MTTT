@@ -2,6 +2,8 @@ package de.melays.ttt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,14 +75,17 @@ public class Karma {
 	}
 	
 	public void reloadKarmaConfig() {	    
-	    customConfigurationFile = new File(plugin.getDataFolder(), "karma.yml");
+	    if (customConfigurationFile == null) {
+	    	customConfigurationFile = new File(plugin.getDataFolder(), "karma.yml");
+	    }
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-		// Schaut nach den Standardwerten in der jar
-		if(!customConfigurationFile.exists()) {
-			plugin.saveResource("karma.yml", false);
-		}
-		
-		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
+	    java.io.InputStream defConfigStream = plugin.getResource("karma.yml");
+	    if (defConfigStream != null) {
+		    Reader reader = new InputStreamReader(defConfigStream);
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
 	
 	public FileConfiguration getKarmaConfig() {

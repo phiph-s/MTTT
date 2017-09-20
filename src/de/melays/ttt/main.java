@@ -1703,7 +1703,7 @@ implements Listener
 	@EventHandler
 	public void onAS(PlayerPickupItemEvent e){
 		Player p = e.getPlayer();
-		Arena ar = m.searchPlayer(p);
+		Arena ar = m.searchSpec(p);
 		if (ar != null){
 			e.setCancelled(true);
 		}
@@ -1711,6 +1711,15 @@ implements Listener
 	
 	@EventHandler
 	public void onAS(PlayerArmorStandManipulateEvent e){
+		Player p = e.getPlayer();
+		Arena ar = m.searchSpec(p);
+		if (ar != null){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onASP(PlayerArmorStandManipulateEvent e){
 		Player p = e.getPlayer();
 		Arena ar = m.searchPlayer(p);
 		if (ar != null){
@@ -1721,7 +1730,7 @@ implements Listener
 	@EventHandler
 	public void onASS(PlayerInteractEntityEvent e){
 		Player p = e.getPlayer();
-		Arena ar = m.searchPlayer(p);
+		Arena ar = m.searchSpec(p);
 		if (ar != null){
 			e.setCancelled(true);
 		}
@@ -1730,7 +1739,7 @@ implements Listener
 	@EventHandler
 	public void onAS(PlayerInteractAtEntityEvent e){
 		Player p = e.getPlayer();
-		Arena ar = m.searchPlayer(p);
+		Arena ar = m.searchSpec(p);
 		if (ar != null){
 			e.setCancelled(true);
 		}

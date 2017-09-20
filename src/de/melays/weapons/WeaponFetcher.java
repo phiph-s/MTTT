@@ -2,6 +2,8 @@ package de.melays.weapons;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,14 +30,17 @@ public class WeaponFetcher {
 	}
 	
 	public void reloadWeaponFile() {
-	    customConfigurationFile = new File(plugin.getDataFolder(), "weapons.yml");
+	    if (customConfigurationFile == null) {
+	    	customConfigurationFile = new File(plugin.getDataFolder(), "weapons.yml");
+	    }
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-		// Schaut nach den Standardwerten in der jar
-		if(!customConfigurationFile.exists()) {
-			plugin.saveResource("weapons.yml", false);
-		}
-		
-		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
+	    java.io.InputStream defConfigStream = plugin.getResource("weapons.yml");
+	    if (defConfigStream != null) {
+		    Reader reader = new InputStreamReader(defConfigStream);
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
 	
 	public FileConfiguration getWeaponFetcher() {
