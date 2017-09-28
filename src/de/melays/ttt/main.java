@@ -1790,27 +1790,32 @@ implements Listener
 	}
 	@EventHandler
 	public void onClick (PlayerInteractEvent e){
-		Player p = e.getPlayer();
-		Arena ar = m.searchPlayer(p);
-		if (e.getAction() == Action.RIGHT_CLICK_BLOCK){
-			if (e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN){
-				Sign s = (Sign) e.getClickedBlock().getState();
-				if (s.getLine(0).equals(mf.getMessage("signtop", false))){
-					p.performCommand("ttt join "+s.getLine(2));
+		try {
+			Player p = e.getPlayer();
+			Arena ar = m.searchPlayer(p);
+			if (e.getAction() == Action.RIGHT_CLICK_BLOCK){
+				if (e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN){
+					Sign s = (Sign) e.getClickedBlock().getState();
+					if (s.getLine(0).equals(mf.getMessage("signtop", false))){
+						String [] args = {"join" , s.getLine(2)};
+						this.getCommand("ttt").execute(p, "ttt", args);
+					}
 				}
-			}
-			if (ar != null){
-				if (!(ar.gamestate == "end")){
-					if (e.getClickedBlock().getType() == Material.ENDER_CHEST && ar.gamestate == "waiting"){
-						p.sendMessage(mf.getMessage("enderchestnotinagme", true));
+				if (ar != null){
+					if (!(ar.gamestate == "end")){
+						if (e.getClickedBlock().getType() == Material.ENDER_CHEST && ar.gamestate == "waiting"){
+							p.sendMessage(mf.getMessage("enderchestnotinagme", true));
+							e.setCancelled(true);
+						}
+						ar.callClickChest(e);
+					}
+					else{
 						e.setCancelled(true);
 					}
-					ar.callClickChest(e);
-				}
-				else{
-					e.setCancelled(true);
 				}
 			}
+		} catch (Exception e1) {
+
 		}
 	}
 	
