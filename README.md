@@ -1,4 +1,6 @@
 # MTTT
+![alt text](https://badges.spiget.org/resources/version/Version-blue-34151.svg)![alt text](https://badges.spiget.org/resources/rating/Rating-blue-34151.svg)![alt text](https://badges.spiget.org/resources/downloads/Downloads-blue-34151.svg)
+
 Multiarena Trouble In Terrorist Town Plugin for Spigot 1.8.8+
 
 Download the "ready to use" jar-file on spigotmc.org
