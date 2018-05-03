@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/CorpseReborn.jar"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/CrackShot.jar"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/PlaceholderAPI.jar"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/statsapi.jar"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/AutoNicker.jar"/>
-	<classpathentry kind="lib" path="C:/Users/seelo/Documents/spigot-1.8.7-R0.1-SNAPSHOT-latest.jar"/>
+	<classpathentry kind="lib" path="/#Files/AutoNicker.jar"/>
+	<classpathentry kind="lib" path="/#Files/CorpseReborn.jar"/>
+	<classpathentry kind="lib" path="/#Files/PlaceholderAPI-2.8.2.jar"/>
+	<classpathentry kind="lib" path="/#Files/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar"/>
+	<classpathentry kind="lib" path="/#Files/statsapi_1-6-0_release.jar"/>
+	<classpathentry kind="lib" path="/#Files/CrackShot.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
