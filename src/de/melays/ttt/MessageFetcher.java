@@ -2,13 +2,13 @@ package de.melays.ttt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Color;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
 
@@ -22,14 +22,17 @@ public class MessageFetcher {
 	}
 	
 	public void reloadMessageFile() {
-	    customConfigurationFile = new File(plugin.getDataFolder(), "messages.yml");
+	    if (customConfigurationFile == null) {
+	    	customConfigurationFile = new File(plugin.getDataFolder(), "messages.yml");
+	    }
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-		// Schaut nach den Standardwerten in der jar
-		if(!customConfigurationFile.exists()) {
-			plugin.saveResource("messages.yml", false);
-		}
-		
-		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
+	    java.io.InputStream defConfigStream = plugin.getResource("messages.yml");
+	    if (defConfigStream != null) {
+		    Reader reader = new InputStreamReader(defConfigStream);
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
 	
 	public FileConfiguration getMessageFetcher() {

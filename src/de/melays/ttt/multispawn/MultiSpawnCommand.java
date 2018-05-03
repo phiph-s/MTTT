@@ -2,7 +2,6 @@ package de.melays.ttt.multispawn;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.melays.ttt.Arena;

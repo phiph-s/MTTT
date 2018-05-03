@@ -1,10 +1,7 @@
 package de.melays.ttt;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,8 +38,8 @@ public class RoleInventory implements Listener {
 				msg = plugin.mf.getMessage("roleinventoryselected", true).replace("%role%", plugin.getDetectiveDisplay(false));
 			}
 			inv = Bukkit.createInventory(null, 9 , msg);
-			inv.setItem(2, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.RED).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
-			inv.setItem(6, new ItemBuilder(Material.WOOL).setWoolColor(DyeColor.BLUE).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(2, new ItemBuilder(Material.WOOL , 1, (byte) 14).setName(plugin.getTraitorDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
+			inv.setItem(6, new ItemBuilder(Material.WOOL , 1, (byte) 11).setName(plugin.getDetectiveDisplay(false)).addLoreLine(ChatColor.RESET + "Passes: " + plugin.karma.getPasses(tp.getPlayer().getUniqueId())).toItemStack());
 			fillPanes(inv);
 			p.openInventory(inv);
 		}
@@ -65,25 +62,98 @@ public class RoleInventory implements Listener {
 	@EventHandler
 	public void onClick (InventoryClickEvent e){
 		try{
-			if (e.getClickedInventory().equals(inv)){
+			Player p = ((Player)e.getWhoClicked());
+			if (e.getClickedInventory().equals(inv) && p == this.p){
 				e.setCancelled(true);
 				if (e.getCurrentItem() == null){
 					return;
 				}
+				TTTPlayer tp = plugin.getAPI().getPlayer(p);
+				Arena a = plugin.m.searchPlayer(tp.getPlayer());
 				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(plugin.getTraitorDisplay(false))){
-					((Player)e.getWhoClicked()).performCommand("traitor");
-					e.getWhoClicked().closeInventory();
+					if (a.usedpass_detective.contains(p)) {
+						toggleDetective();
+					}
+					toggleTraitor();
 					open();
 				}
 				else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(plugin.getDetectiveDisplay(false))){
-					((Player)e.getWhoClicked()).performCommand("detective");
-					e.getWhoClicked().closeInventory();
+					if (a.usedpass.contains(p)) {
+						toggleTraitor();
+					}
+					toggleDetective();
 					open();
 				}
 			}
 		}
 		catch (Exception ex){
 			
+		}
+	}
+	
+	public void toggleTraitor() {
+		TTTPlayer tp = plugin.getAPI().getPlayer(p);
+		Arena ar = plugin.m.searchPlayer(tp.getPlayer());
+		if (ar == null){
+			p.sendMessage(plugin.mf.getMessage("notingame", true));
+			return;
+		}
+		if (ar.gamestate != "waiting"){
+			p.sendMessage(plugin.mf.getMessage("alreadyingame", true));
+			return;
+		}
+		else{
+			if (ar.usedpass_detective.contains(p)){
+				p.sendMessage(plugin.mf.getMessage("alreadydetectivepass", true));
+				return;
+			}
+			if (ar.usedpass.contains(p)){
+				ar.usedpass.remove(p);
+				p.sendMessage(plugin.mf.getMessage("stoppass", true));
+				return;
+			}
+			if (plugin.karma.getPasses(p.getUniqueId()) >= 1 || p.hasPermission("ttt.unlimited.traitor")){
+				ar.usedpass.add(p);
+				p.sendMessage(plugin.mf.getMessage("requesttraitor", true));
+				return;
+			}
+			else{
+				p.sendMessage(plugin.mf.getMessage("nopass", true));
+				return;
+			}
+		}
+	}
+	
+	public void toggleDetective() {
+		TTTPlayer tp = plugin.getAPI().getPlayer(p);
+		Arena ar = plugin.m.searchPlayer(tp.getPlayer());
+		if (ar == null){
+			p.sendMessage(plugin.mf.getMessage("notingame", true));
+			return;
+		}
+		if (ar.gamestate != "waiting"){
+			p.sendMessage(plugin.mf.getMessage("alreadyingame", true));
+			return;
+		}
+		else{
+			if (ar.usedpass.contains(p)){
+				p.sendMessage(plugin.mf.getMessage("alreadytraitorpass", true));
+				return;
+			}
+			if (ar.usedpass_detective.contains(p)){
+				ar.usedpass_detective.remove(p);
+				p.sendMessage(plugin.mf.getMessage("stoppass", true));
+				return;
+			}
+			if (plugin.karma.getPasses(p.getUniqueId()) >= 1 || p.hasPermission("ttt.unlimited.detective")){
+				ar.usedpass_detective.add(p);
+				p.sendMessage(plugin.mf.getMessage("requestdetective", true));
+				return;
+			}
+			else{
+				p.sendMessage(plugin.mf.getMessage("nopass", true));
+				return;
+			}
 		}
 	}
 	

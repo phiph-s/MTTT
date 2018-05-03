@@ -1,6 +1,5 @@
 package de.melays.ttt;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Material;

@@ -1,11 +1,16 @@
 package de.melays.ttt.api;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.melays.ttt.Arena;
 import de.melays.ttt.main;
 
 public class TTTApi {
+	
+	public static TTTApi getInstance() {
+		return ((main) Bukkit.getPluginManager().getPlugin("MTTT")).getAPI();
+	}
 	
 	main plugin;
 	public TTTApi (main m){

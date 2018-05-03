@@ -1,5 +1,5 @@
 name: MTTT
-version: 3.0.0 Alpha
+version: 3.2.2
 main: de.melays.ttt.main
 author: MeLays
 softdepend: [Multiverse-Core, CrackShot, PlaceholderAPI , StatsAPI , AutoNicker]
@@ -8,6 +8,7 @@ commands:
         description: All informations
         usage: /<command>
     tc:
+        aliases: [traitorchat , t , sc]
         description: Traitorchat
         usage: /<command>
     tshop:

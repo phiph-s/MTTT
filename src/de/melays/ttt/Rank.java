@@ -2,13 +2,14 @@ package de.melays.ttt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,14 +27,17 @@ public class Rank {
 	}
 	
 	public void reloadRanks() {
-	    customConfigurationFile = new File(plugin.getDataFolder(), "ranks.yml");
+	    if (customConfigurationFile == null) {
+	    	customConfigurationFile = new File(plugin.getDataFolder(), "ranks.yml");
+	    }
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-		// Schaut nach den Standardwerten in der jar
-		if(!customConfigurationFile.exists()) {
-			plugin.saveResource("ranks.yml", false);
-		}
-		
-		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
+	    java.io.InputStream defConfigStream = plugin.getResource("ranks.yml");
+	    if (defConfigStream != null) {
+		    Reader reader = new InputStreamReader(defConfigStream);
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
 	
 	public FileConfiguration getRanks() {
@@ -73,7 +77,6 @@ public class Rank {
 	
 	public String getRank (int karma){
 		int last = 0;
-		int lastindex = 0;
 		ArrayList<Integer> templ = new ArrayList<Integer> (keylist.keySet());
 		Collections.sort(templ);
 		for (int i : templ){
@@ -87,15 +90,12 @@ public class Rank {
 	}
 	
 	public String nextRank (int karma){
-		int last = 0;
-		int lastindex = 0;
 		ArrayList<Integer> templ = new ArrayList<Integer> (keylist.keySet());
 		Collections.sort(templ);
 		for (int i : templ){
 			if (i > karma){
 				return ChatColor.translateAlternateColorCodes('&',keylist.get(i)+"");
 			}
-			last = i;
 		}
 		return "";
 		

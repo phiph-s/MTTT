@@ -2,8 +2,6 @@ package de.melays.ttt;
 
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
-
 public class StatsEntry {
 	
 	public UUID uuid;

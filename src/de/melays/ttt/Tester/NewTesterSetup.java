@@ -1,6 +1,5 @@
 package de.melays.ttt.Tester;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -59,6 +58,7 @@ public class NewTesterSetup implements Listener{
 		p.sendMessage(plugin.prefix + ChatColor.GREEN + "Area Selection Tool" + ChatColor.GRAY + " Instructions:");
 		p.sendMessage(plugin.prefix + "Rightclick and Leftclick the borders of the tester.");
 		p.sendMessage(plugin.prefix + "No Players will be able to enter this area while a player is testing.");
+		p.sendMessage(plugin.prefix + "At the end use /ttt setlocation to set the location tester.inner and tester.outer!");
 	}
 	public void locationToConfig(Location l ,String path){
 		plugin.getConfig().set(path+".x", l.getX());

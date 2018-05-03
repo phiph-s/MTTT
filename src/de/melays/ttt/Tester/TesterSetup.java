@@ -1,6 +1,5 @@
 package de.melays.ttt.Tester;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;

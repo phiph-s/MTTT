@@ -14,11 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 
 public class RoleManager {
@@ -46,10 +41,9 @@ public class RoleManager {
 		return item;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void setRoles (ArrayList<Player> passes , ArrayList<Player> dpasses){
-		long seed = System.nanoTime();
 		Collections.shuffle(arena.players);
-		seed = System.nanoTime();
 		Collections.shuffle(arena.players);
 		arena.startplayers = arena.players.size();
 		for (Player p : arena.players){
@@ -126,8 +120,9 @@ public class RoleManager {
 			}
 			Location lc = t.getLocation();
 			lc.setY(t.getLocation().getY()+3);
-			t.sendTitle(plugin.getTraitorDisplay(false), "");
-			arena.traitors_save += t.getDisplayName()+" ";
+			//Using deceprated method coz spigot 1.8.8 has no sendTitle method that isn't deceprated!
+			t.sendTitle(plugin.getTraitorDisplay(false) , "");
+			arena.traitors_save += t.getName()+" ";
 			arena.karmaToLevel(t);
 			arena.shop.addPoints(t, plugin.getConfig().getInt("startpoints"));
 		}
@@ -204,7 +199,7 @@ public class RoleManager {
 		arena.traitors_save = arena.commaString(arena.traitors_save, ChatColor.translateAlternateColorCodes('&', plugin.mf.getMessage("tlistcolor", false)));
 		for (Player p : arena.traitors){
 			p.sendMessage(plugin.mf.getMessage("traitorslist", true).replace("%traitorlist%", arena.traitors_save));
-			Collection<Player> ts = new ArrayList(arena.traitors);
+			Collection<Player> ts = new ArrayList<Player>(arena.traitors);
 		  	  try{
 		  		  ColorTabAPI.setTabStyle(p , ChatColor.RED+"" , "" , 10 , ts);
 		  	  }
@@ -214,7 +209,7 @@ public class RoleManager {
 			
 		}
 		for (Player p : arena.detectives){
-			Collection<Player> de = new ArrayList(arena.getPlayerList());
+			Collection<Player> de = new ArrayList<Player>(arena.getPlayerList());
 		  	  try{
 		  		ColorTabAPI.setTabStyle(p , ChatColor.BLUE+"" , "" , 5 , de);
 		  	  }
@@ -427,6 +422,7 @@ public class RoleManager {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String checkEnd (){
 		if (arena.gamestate == "ingame"){
 			int innos = arena.detectives.size() + arena.innocents.size();

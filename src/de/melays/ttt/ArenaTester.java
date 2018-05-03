@@ -35,9 +35,13 @@ public class ArenaTester {
 		return false;
 	}
 	
-	public void enableLamps(){
+	@SuppressWarnings("deprecation")
+	public void enableLamps(String role){
+		Material m = Material.getMaterial(plugin.getConfig().getString("tester."+role+"_lamp.material"));
+		byte data = (byte) plugin.getConfig().getInt("tester."+role+"_lamp.data");
 		for (Location loc : lamps){
-			loc.getBlock().setType(Material.GLOWSTONE);
+			loc.getBlock().setType(m);
+			loc.getBlock().setData(data);
 		}
 	}
 	
@@ -148,6 +152,14 @@ public class ArenaTester {
 			plugin.sd.playSound(p , "CLICK", "BLOCK_LEVER_CLICK" );
 			return;
 		}
+		if (a.startplayers <= plugin.getConfig().getInt("minplayerstotest")){
+			plugin.sd.playSound(p , "CLICK", "BLOCK_LEVER_CLICK" );
+			return;
+		}
+		if (a.tester){
+			plugin.sd.playSound(p , "CLICK", "BLOCK_LEVER_CLICK" );
+			return;
+		}
 		p.teleport(inner);
 		for (Player pt : a.getPlayerList()){
 			if (pt != p){
@@ -158,6 +170,7 @@ public class ArenaTester {
 		}
 		a.sendRadiusMessage(p, plugin.mf.getMessage("enteredtester", true).replace("%player%", p.getName()));
 		this.enableRedstone();
+		testing = p;
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 			public void run() {
@@ -166,7 +179,7 @@ public class ArenaTester {
 				if (a.getPlayerList().contains(p)){
 					if (a.traitors.contains(p)){
 						 if (!p.getInventory().contains(new ShopItem().getSpoofer(false))){
-								enableLamps();
+								enableLamps("traitor");
 								plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 									public void run() {
 										disableLamps();
@@ -177,6 +190,14 @@ public class ArenaTester {
 							 p.getInventory().remove(new ShopItem().getSpoofer(false));
 							 p.sendMessage(plugin.mf.getMessage("spoofer", true));
 						 }
+					}
+					else {
+						enableLamps("innocent");
+						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+							public void run() {
+								disableLamps();
+							}
+						}, 50L);
 					}
 				}
 			}

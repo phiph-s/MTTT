@@ -2,12 +2,13 @@ package de.melays.ttt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,14 +24,17 @@ public class RewardManager {
 	}
 	
 	public void reloadRewardFile() {
-	    customConfigurationFile = new File(plugin.getDataFolder(), "rewards.yml");
+	    if (customConfigurationFile == null) {
+	    	customConfigurationFile = new File(plugin.getDataFolder(), "rewards.yml");
+	    }
+	    customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
 
-		// Schaut nach den Standardwerten in der jar
-		if(!customConfigurationFile.exists()) {
-			plugin.saveResource("rewards.yml", false);
-		}
-		
-		customConfig = YamlConfiguration.loadConfiguration(customConfigurationFile);
+	    java.io.InputStream defConfigStream = plugin.getResource("rewards.yml");
+	    if (defConfigStream != null) {
+		    Reader reader = new InputStreamReader(defConfigStream);
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+	        customConfig.setDefaults(defConfig);
+	    }
 	}
 	
 	public FileConfiguration getRewardFile() {
