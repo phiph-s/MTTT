@@ -665,14 +665,17 @@ implements Listener
 		Player p = (Player)e.getWhoClicked();
 		Arena ar2 = m.searchPlayer(p);
 		if (ar2 != null){
+			
 			ar2.callClickEvent(e);
 			if (!ar2.gamestate.equals("waiting")){return;}
+			
 			int slotrole = getConfig().getInt("roleitem_slot");
 			int slotleave = getConfig().getInt("leaveitem_slot");
-			if (p.getInventory().getHeldItemSlot() == slotrole-1 && (getConfig().getBoolean("role_item"))){
+			
+			if (e.getSlot() == slotrole-1 && (getConfig().getBoolean("role_item"))){
 				e.setCancelled(true);
 			}
-			if (p.getInventory().getHeldItemSlot() == slotleave-1 && getConfig().getBoolean("leave_item")){
+			if (e.getSlot() == slotleave-1 && getConfig().getBoolean("leave_item")){
 				e.setCancelled(true);
 			}
 		}
