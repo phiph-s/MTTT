@@ -67,12 +67,12 @@ import org.mcstats.Metrics;
 
 import de.melays.Sound.SoundDebugger;
 import de.melays.statsAPI.StatsAPI;
-import de.melays.ttt.ColorTabAPI;
 import de.melays.ttt.Tester.NewTesterSetup;
 import de.melays.ttt.Tester.TesterSetup;
 import de.melays.ttt.api.TTTApi;
 import de.melays.ttt.multispawn.MultiSpawn;
 import de.melays.ttt.multispawn.MultiSpawnCommand;
+import de.melays.ttt.placeholderAPI.PlaceHolderAPIExpansion;
 import de.melays.weapons.WeaponFetcher;
 
 
@@ -344,7 +344,7 @@ implements Listener
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
 			
 			System.out.println("[MTTT] Hooking into PlaceholderAPI ...");
-			new PlaceHolderAPI(this).hook();
+			new PlaceHolderAPIExpansion(this).register();
 			System.out.println("[MTTT] Succesfully hooked into PlaceholderAPI !");
 			
 		}
@@ -406,6 +406,9 @@ implements Listener
 		getConfig().addDefault("hidespecs", false);
 		getConfig().addDefault("newspecmode", true);
 		getConfig().addDefault("alphawarning", true);
+		getConfig().addDefault("use_ttt_chat", true);
+		getConfig().addDefault("chestlimit.enable", false);
+		getConfig().addDefault("chestlimit.amount", 3);
 		getConfig().addDefault("tester.innocent_lamp.material", "WOOL");
 		getConfig().addDefault("tester.innocent_lamp.data", 5);
 		getConfig().addDefault("tester.traitor_lamp.material", "WOOL");
@@ -1369,7 +1372,7 @@ implements Listener
 		else if (commandLabel.equalsIgnoreCase("ttt")){
 			if (getConfig().getBoolean("ttt_help")){
 				p.sendMessage("");
-				p.sendMessage(prefix + ChatColor.BOLD + " MTTT by MeLays/Schwalboss @ melays.de " + this.getDescription().getVersion());
+				p.sendMessage(prefix + ChatColor.BOLD + " MTTT by Schwalboss @ m-3.me " + this.getDescription().getVersion());
 				p.sendMessage(prefix + " /ttt Arguments:");
 				p.sendMessage(prefix + "    join <arena> | Join an Arena");
 				p.sendMessage(prefix + "    leave | Leave an Arena");
@@ -1668,6 +1671,9 @@ implements Listener
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void playerChat(AsyncPlayerChatEvent e){
+		
+		if (!getConfig().getBoolean("use_ttt_chat")) return;
+		
 		Player p = e.getPlayer();
 		Arena ar = m.searchPlayer(p);
 		if (ar != null && !ar.specs.contains(p)){

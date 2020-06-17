@@ -186,6 +186,7 @@ public class WeaponFetcher {
 				}
 				else{
 					p.getInventory().addItem(is);
+					plugin.m.searchPlayer(p).openedChests.put(p, plugin.m.searchPlayer(p).openedChests.get(p) + 1);
 				}
 			}
 		}

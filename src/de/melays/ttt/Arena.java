@@ -85,10 +85,12 @@ public class Arena
   String traitors_save = "";
   public ArrayList<Player> innocents = new ArrayList<Player>();
   public String gamestate = "waiting";
-  int min;
+  public int min;
   
   HashMap<Player , ItemStack[]> inventorys = new HashMap<Player , ItemStack[]>();
   HashMap<Player , ItemStack[]> armorinventorys = new HashMap<Player , ItemStack[]>();
+  
+  public HashMap<Player , Integer> openedChests = new HashMap<Player , Integer>();
   
   HashMap<Player , Integer> startkarma = new HashMap<Player , Integer>();
   
@@ -502,6 +504,7 @@ public class Arena
 									  }
 								  }
 								  startkarma.put(p, plugin.karma.getKarma(p));
+								  openedChests.put(p, 0);
 								  p.setGameMode(GameMode.SURVIVAL);
 								  p.getInventory().clear();
 								  p.getInventory().setArmorContents(new ItemStack[p.getInventory().getArmorContents().length]);
@@ -744,6 +747,7 @@ public class Arena
 			  }
 		  }
 		  startkarma.put(p, plugin.karma.getKarma(p));
+		  openedChests.put(p, 0);
 		  p.setGameMode(GameMode.SURVIVAL);
 		  if (lobbymode){
 			  movetoLobby(p);
@@ -981,8 +985,18 @@ public class Arena
   
   public void callClickChest (final PlayerInteractEvent e){
 	  if (e.getAction() == Action.RIGHT_CLICK_BLOCK){
+		  
 		  if (!(counter == plugin.getConfig().getInt("waitingtime") && players.size() < min)){
 				  if (e.getClickedBlock().getType() == Material.CHEST){
+					  
+					  if (plugin.getConfig().getBoolean("chestlimit.enable")) {
+						  if (!this.openedChests.containsKey(e.getPlayer()))  this.openedChests.put(e.getPlayer(), 0);
+						  if (this.openedChests.get(e.getPlayer()) >= plugin.getConfig().getInt("chestlimit.amount")) {
+							  e.getPlayer().sendMessage(plugin.mf.getMessage("toomanychestsopened", true));
+							  return;
+						  }
+					  }
+					  
 					  blocks.add(e.getClickedBlock());
 					  if (plugin.wf.giveRandomChestItem(e.getPlayer() , "chest")){
 						  e.getClickedBlock().setType(Material.AIR);
@@ -1413,6 +1427,7 @@ public void join(Player p){
 	  }
 	  inventorys.put(p, p.getInventory().getContents());
 	  startkarma.put(p, plugin.karma.getKarma(p));
+	  openedChests.put(p, 0);
 	  armorinventorys.put(p, p.getInventory().getArmorContents());
 	  if (plugin.nicknamer){
 		  NickSession session = NickAPI.getSession(p);
